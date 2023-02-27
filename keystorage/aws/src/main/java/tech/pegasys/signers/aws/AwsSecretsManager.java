@@ -15,6 +15,7 @@ package tech.pegasys.signers.aws;
 import static tech.pegasys.signers.common.SecretValueMapperUtil.mapSecretValue;
 
 import java.io.Closeable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -59,6 +60,26 @@ public class AwsSecretsManager implements Closeable {
         SecretsManagerClient.builder()
             .credentialsProvider(credentialsProvider)
             .region(Region.of(region))
+            .build();
+
+    return new AwsSecretsManager(secretsManagerClient);
+  }
+
+  static AwsSecretsManager createAwsSecretsManagerWithEndpointOverride(
+      final String accessKeyId,
+      final String secretAccessKey,
+      final String region,
+      final URI endpointOverride) {
+    final AwsBasicCredentials awsBasicCredentials =
+        AwsBasicCredentials.create(accessKeyId, secretAccessKey);
+    final StaticCredentialsProvider credentialsProvider =
+        StaticCredentialsProvider.create(awsBasicCredentials);
+
+    final SecretsManagerClient secretsManagerClient =
+        SecretsManagerClient.builder()
+            .credentialsProvider(credentialsProvider)
+            .region(Region.of(region))
+            .endpointOverride(endpointOverride)
             .build();
 
     return new AwsSecretsManager(secretsManagerClient);

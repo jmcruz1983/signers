@@ -13,6 +13,7 @@
 package tech.pegasys.signers.aws;
 
 import java.io.Closeable;
+import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -47,6 +48,18 @@ public class AwsSecretsManagerProvider implements Closeable {
     return fromCacheOrCallable(
         new AwsKeyIdentifier(accessKeyId, Region.of(region)),
         () -> AwsSecretsManager.createAwsSecretsManager(accessKeyId, secretAccessKey, region));
+  }
+
+  public AwsSecretsManager createAwsSecretsManager(
+      final String accessKeyId,
+      final String secretAccessKey,
+      final String region,
+      final URI endpointOverride) {
+    return fromCacheOrCallable(
+        new AwsKeyIdentifier(accessKeyId, Region.of(region)),
+        () ->
+            AwsSecretsManager.createAwsSecretsManagerWithEndpointOverride(
+                accessKeyId, secretAccessKey, region, endpointOverride));
   }
 
   public AwsSecretsManager createAwsSecretsManager() {
